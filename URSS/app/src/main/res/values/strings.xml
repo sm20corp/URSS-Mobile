@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">URSS</string>
+
+    <!-- CONNECTION ACTIVITY-->
+    <string name="userMail">Nom d\'utilisateur</string>
+    <string name="userPassword">Mot de passe</string>
+    <string name="signUpButton">S\'inscrire</string>
+    <string name="signInButton">Se connecter</string>
+</resources>
