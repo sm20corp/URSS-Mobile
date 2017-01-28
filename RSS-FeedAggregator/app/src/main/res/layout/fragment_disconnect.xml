@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="10"
+        android:id="@+id/linearLayout_disconnect"
+        android:layout_centerVertical="true"
+        android:gravity="center_horizontal"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:background="@color/colorNavDrawer">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:background="@drawable/background_popup"
+            android:id="@+id/disconnect_layout"
+            android:layout_weight="9"
+            android:gravity="center"
+            android:layout_gravity="center_vertical">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="Disconnect"
+                android:id="@+id/disconnect_comfirm_button"
+                android:background="@drawable/background_popup_button"
+                android:textColor="@color/white"
+                android:textSize="13dp"
+                android:textAllCaps="false"
+                android:layout_alignParentBottom="true"
+                android:layout_alignRight="@+id/textView5"
+                android:layout_alignEnd="@+id/textView5"
+                android:layout_marginBottom="15dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="Cancel"
+                android:id="@+id/cancel_disconnect_button"
+                android:background="@drawable/background_popup_button2"
+                android:textColor="@color/white"
+                android:textSize="13dp"
+                android:textAllCaps="false"
+                android:layout_alignTop="@+id/disconnect_comfirm_button"
+                android:layout_alignLeft="@+id/textView5"
+                android:layout_alignStart="@+id/textView5" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView5"
+                android:text="Please confirm to get disconnected"
+                android:textColor="@color/black_drawer"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>
