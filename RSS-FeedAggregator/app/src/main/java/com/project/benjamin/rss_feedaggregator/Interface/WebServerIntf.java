@@ -22,8 +22,8 @@ public interface WebServerIntf {
 
     @POST("auth/local")
     Call<Credential> login(@Body LoginRequest body);
-
-    @POST("api/credentials/")
+    
+    @POST("api/users/createAccount")
     Call<Credential> register(@Body LoginRequest body);
 
     @GET("api/credentials/{userID}")
