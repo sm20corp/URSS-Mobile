@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mBar = getSupportActionBar();
-        mBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+        mBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
         mBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         mBar.setCustomView(R.layout.actionbar_custom);
 
@@ -108,9 +108,18 @@ public class MainActivity extends AppCompatActivity {
                 showAddFeedDialog();
             }
         });
+        addFeedButton.setVisibility(View.GONE);
 
         titleText = (TextView)findViewById(R.id.title_text);
         titleText.setText("URSS");
+    }
+
+    public void setTitleBar(String title) {
+        mBar.setTitle(title);
+    }
+
+    public void hideAction() {
+        addFeedButton.setVisibility(View.GONE);
     }
 
     public void iconControl() {
@@ -217,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void displayHomePage(Credential currentUser) {
+        addFeedButton.setVisibility(View.VISIBLE);
         this.currentuser = currentUser;
         System.out.println("User ID : " + currentUser.getuserId());
         HomeFragment homeFragment = new HomeFragment();

@@ -46,6 +46,8 @@ public class DisconnectFragment extends Fragment {
                 SharedPreferences settings = ((MainActivity)getActivity()).getSharedPreferences("RSSFeedUserInfo", 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.clear();
+                ((MainActivity)getActivity()).setTitleBar("URSS Feed Aggregator");
+                ((MainActivity)getActivity()).hideAction();
                 editor.apply();
                 Fragment fragment = new LoginFragment();
                 fragmentManager.beginTransaction().setCustomAnimations(R.animator.slide_in_left,
