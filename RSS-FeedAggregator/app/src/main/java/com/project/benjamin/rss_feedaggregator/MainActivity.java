@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -29,12 +30,20 @@ import com.project.benjamin.rss_feedaggregator.Fragment.AllFragment;
 import com.project.benjamin.rss_feedaggregator.Fragment.DisconnectFragment;
 import com.project.benjamin.rss_feedaggregator.Fragment.HomeFragment;
 import com.project.benjamin.rss_feedaggregator.Fragment.LoginFragment;
+import com.project.benjamin.rss_feedaggregator.Interface.WebServerIntf;
 import com.project.benjamin.rss_feedaggregator.Model.Feed.Feed;
+import com.project.benjamin.rss_feedaggregator.Model.Feed.FeedRequest;
+import com.project.benjamin.rss_feedaggregator.Model.History;
 import com.project.benjamin.rss_feedaggregator.Model.Login.Credential;
 import com.project.benjamin.rss_feedaggregator.Model.DrawerItem;
+import com.project.benjamin.rss_feedaggregator.Retrofit.ApiManager;
 import com.project.benjamin.rss_feedaggregator.Utils.AddFeedDialog;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,12 +73,7 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.setScrimColor(Color.TRANSPARENT);
         mDrawerListLeft = (ListView) findViewById(R.id.left_drawer);
-
-        /* TEST TO REMOVE */
         mFeeds = new ArrayList<>();
-        mFeeds.add(new Feed("http://feeds.bbci.co.uk/news/world/rss.xml", "01"));
-        mFeeds.add(new Feed("http://www.jeuxvideo.com/rss/rss.xml", "01"));
-        /* TEST TO REMOVE */
 
         displayMenuDrawer();
         iconControl();
@@ -135,11 +139,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void displayMenuDrawer() {
-        DrawerItem[] drawerItem = new DrawerItem[3];
+        DrawerItem[] drawerItem = new DrawerItem[2];
 
         drawerItem[0] = new DrawerItem(R.drawable.ic_home, "Home");
-        drawerItem[1] = new DrawerItem(R.drawable.ic_all, "All articles");
-        drawerItem[2] = new DrawerItem(R.drawable.ic_disconnect, "Disconnect");
+        drawerItem[1] = new DrawerItem(R.drawable.ic_disconnect, "Disconnect");
 
         mAdapterLeft = new LeftDrawerCustomAdapter(this, R.layout.left_listview_item_row, drawerItem);
         mDrawerListLeft.setAdapter(mAdapterLeft);
@@ -196,10 +199,6 @@ public class MainActivity extends AppCompatActivity {
                 titleText.setText("Home");
                 break;
             case 1:
-                fragment = new AllFragment();
-                titleText.setText("All");
-                break;
-            case 2:
                 fragment = new DisconnectFragment();
                 titleText.setText("Disconnect");
                 break;
@@ -248,18 +247,96 @@ public class MainActivity extends AppCompatActivity {
         addFeedDialog.show();
     }
 
-    public void addFeed(String feedURL) {
+    public void addFeed(final String feedURL) {
         if (addFeedDialog != null && addFeedDialog.isShowing()) {
             addFeedDialog.dismiss();
         }
-        Toast.makeText(this, "Feed added : " + feedURL, Toast.LENGTH_SHORT).show();
+
+        WebServerIntf webServerIntf = ApiManager.getWebServerIntf();
+        Call<Feed> authentificateUserCall;
+        final FeedRequest feedRequest = new FeedRequest();
+        feedRequest.setUrl(feedURL);
+        authentificateUserCall = webServerIntf.addFeed("Bearer " + currentuser.getToken(), feedRequest);
+        authentificateUserCall.enqueue(new Callback<Feed>() {
+            @Override
+            public void onResponse(Call<Feed> call, Response<Feed> response) {
+                System.out.println("response = " + response.raw().toString());
+                if (response.isSuccessful()) {
+                    Feed feed = response.body();
+                    feed.setUrl(feedURL);
+                    mFeeds.add(feed);
+                    addToHistory(feed.getId());
+                    System.out.println("FeedRequest response : " + feed.getId());
+                } else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Feed> call, Throwable t) {
+                System.out.println("On failure login : " + t.getMessage());
+            }
+        });
+    }
+
+    private void addToHistory(final String feedID) {
+        WebServerIntf webServerIntf = ApiManager.getWebServerIntf();
+        Call<String> authentificateUserCall;
+        authentificateUserCall = webServerIntf.addToHistory("Bearer " + currentuser.getToken(), feedID);
+        authentificateUserCall.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                System.out.println("response = " + response.raw().toString());
+                if (response.isSuccessful()) {
+                    Fragment fg = getFragmentManager().findFragmentById(R.id.content_frame);
+                    if (fg instanceof HomeFragment) {
+                        ((HomeFragment)fg).updateFeedsList();
+                    }
+                } else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                System.out.println("On failure load Feeds : " + t.getMessage());
+            }
+        });
     }
 
     public ArrayList<Feed> getFeeds() {
         return mFeeds;
     }
 
+    public void setFeeds(ArrayList<Feed> feeds) {
+        mFeeds = feeds;
+    }
+
     public void addFeed(Feed feed) {
         mFeeds.add(feed);
+    }
+
+    private boolean mLeaveCheck = false;
+    final Handler handler_back = new Handler();
+    final Runnable runnable_back = new Runnable() {
+        @Override
+        public void run() {
+            mLeaveCheck = false;
+        }
+    };
+
+    @Override
+    public void onBackPressed() {
+        Fragment fg = getFragmentManager().findFragmentById(R.id.content_frame);
+        if (fg instanceof HomeFragment) {
+            ((HomeFragment)fg).onBack();
+        } else {
+            Toast.makeText(this, "Press once again to leave", Toast.LENGTH_SHORT).show();
+            if (mLeaveCheck == true) {
+                mLeaveCheck = false;
+                super.onBackPressed();
+            } else {
+                handler_back.postDelayed(runnable_back, 1500);
+                mLeaveCheck = true;
+            }
+        }
     }
 }

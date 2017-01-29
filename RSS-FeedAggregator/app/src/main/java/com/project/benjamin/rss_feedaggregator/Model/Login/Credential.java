@@ -13,6 +13,9 @@ public class Credential {
     @SerializedName("userId")
     private String userId;
 
+    @SerializedName("history")
+    private String history;
+
     private String email = "";
     private String password = "";
 
@@ -59,6 +62,22 @@ public class Credential {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getHistory() {
+        return history;
+    }
+
+    public void setHistory(String history) {
+        this.history = history;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     @Override

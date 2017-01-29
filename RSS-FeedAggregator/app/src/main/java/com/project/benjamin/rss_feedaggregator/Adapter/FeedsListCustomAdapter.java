@@ -29,7 +29,7 @@ public class FeedsListCustomAdapter extends ArrayAdapter<Feed> {
 
     private Context mContext;
     private int layoutResourceId;
-    private ArrayList<Feed> data = null;
+    private ArrayList<Feed> data = new ArrayList<>();
     private View listItem;
     private ImageView imageView;
 
@@ -55,7 +55,7 @@ public class FeedsListCustomAdapter extends ArrayAdapter<Feed> {
         Feed folder = data.get(position);
 
         textTitle.setText(folder.getUrl());
-        textDescription.setText(folder.getId());
+        textDescription.setText("");
 
         return listItem;
     }

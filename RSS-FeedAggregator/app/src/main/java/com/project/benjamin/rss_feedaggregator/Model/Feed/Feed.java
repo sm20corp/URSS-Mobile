@@ -15,6 +15,18 @@ public class Feed {
     @SerializedName("id")
     private String id;
 
+    @SerializedName("_id")
+    private String _id;
+
+    @SerializedName("title")
+    private String title;
+
+    @SerializedName("link")
+    private String link;
+
+    @SerializedName("description")
+    private String description;
+
     @SerializedName("articles")
     private ArrayList<String> articles;
 
@@ -48,6 +60,38 @@ public class Feed {
 
     public void setArticles(ArrayList<String> articles) {
         this.articles = articles;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
 
